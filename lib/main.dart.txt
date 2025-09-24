@@ -1,0 +1,62 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'ESP Control',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: ControlPage(),
+    );
+  }
+}
+
+class ControlPage extends StatelessWidget {
+  final String baseUrl = "http://192.168.4.1"; // آدرس ESP8266
+
+  Future<void> sendCommand(String endpoint) async {
+    final url = Uri.parse('$baseUrl/$endpoint');
+    try {
+      await http.get(url);
+      print("Command sent: $endpoint");
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("کنترل درب و چراغ")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => sendCommand("door1"),
+              child: Text("درب ۱"),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => sendCommand("door2"),
+              child: Text("درب ۲"),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => sendCommand("light"),
+              child: Text("چراغ"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
